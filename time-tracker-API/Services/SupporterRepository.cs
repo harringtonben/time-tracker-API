@@ -33,5 +33,26 @@ namespace time_tracker_API.Services
             }
         }
 
+        public bool AddSupporter(Supporter supporter)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Execute(@"INSERT INTO Employees
+                                                            (
+                                                              Name,
+                                                              Title,
+                                                              ManagerId
+                                                            )
+                                                        VALUES 
+                                                            (
+                                                              @Name,
+                                                              @Title,
+                                                              @ManagerId  
+                                                            )", supporter);
+                return result == 1;
+            }
+        }
     }
 }
