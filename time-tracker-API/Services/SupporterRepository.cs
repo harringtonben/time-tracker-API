@@ -28,7 +28,7 @@ namespace time_tracker_API.Services
             {
                 db.Open();
                 
-                var result = db.Query<Supporter>("select * from employees").ToList();
+                var result = db.Query<Supporter>("SELECT * from employees").ToList();
                 return result;
             }
         }
@@ -67,6 +67,18 @@ namespace time_tracker_API.Services
 
                 return result == 1;
             }
+        }
+
+        public bool GetSupporterById(int id)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.QueryFirst("SELECT * FROM Employees where employeeId = @id", new { id });
+
+                return result != null;
+            }   
         }
     }
 }

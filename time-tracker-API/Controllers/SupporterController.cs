@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using time_tracker_API.Services;
 
@@ -50,6 +51,15 @@ namespace time_tracker_API.Controllers
                 Title = supporter.Title,
                 ManagerId = supporter.ManagerId
             };
+
+            try
+            {
+                var checkSupporter = _repo.GetSupporterById(id);
+            }
+            catch(Exception)
+            {
+                    
+            }
 
             var editSupporter = _repo.EditSupporter(editedSupporter);
 
