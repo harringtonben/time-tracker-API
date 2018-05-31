@@ -39,5 +39,21 @@ namespace time_tracker_API.Controllers
                 : StatusCode((int) HttpStatusCode.InternalServerError,
                     "Sorry, something went wrong. Please try again later.");
         }
+
+        [HttpPut]
+        public IActionResult Edit([FromBody] SupporterDto supporter)
+        {
+            var editedSupporter = new Supporter
+            {
+                EmployeeId = supporter.EmployeeId,
+                Name = supporter.Name,
+                Title = supporter.Title,
+                ManagerId = supporter.ManagerId
+            };
+
+            var editSupporter = _repo.EditSupporter(editedSupporter);
+
+            return Ok();
+        }
     }
 }

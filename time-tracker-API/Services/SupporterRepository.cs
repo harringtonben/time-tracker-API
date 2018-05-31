@@ -54,5 +54,19 @@ namespace time_tracker_API.Services
                 return result == 1;
             }
         }
+
+        public bool EditSupporter(Supporter editedSupporter)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Execute(@"UPDATE Employees
+                                          SET Name = @name, TItle = @Title, ManagerId = @ManagerId
+                                          WHERE EmployeeId = @EmployeeId", editedSupporter);
+
+                return result == 1;
+            }
+        }
     }
 }
