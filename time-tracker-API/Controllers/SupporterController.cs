@@ -40,12 +40,12 @@ namespace time_tracker_API.Controllers
                     "Sorry, something went wrong. Please try again later.");
         }
 
-        [HttpPut]
-        public IActionResult Edit([FromBody] SupporterDto supporter)
+        [HttpPut("{id}")]
+        public IActionResult Edit([FromBody] SupporterDto supporter, int id)
         {
             var editedSupporter = new Supporter
             {
-                EmployeeId = supporter.EmployeeId,
+                EmployeeId = id,
                 Name = supporter.Name,
                 Title = supporter.Title,
                 ManagerId = supporter.ManagerId
