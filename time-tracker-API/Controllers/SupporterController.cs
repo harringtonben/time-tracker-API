@@ -23,7 +23,7 @@ namespace time_tracker_API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(SupporterDto supporter)
+        public IActionResult Add([FromBody]SupporterDto supporter)
         {
             var newSupporter = new Supporter
             {
