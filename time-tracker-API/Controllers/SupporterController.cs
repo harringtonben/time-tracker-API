@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using time_tracker_API.Services;
@@ -56,14 +57,19 @@ namespace time_tracker_API.Controllers
             {
                 var checkSupporter = _repo.GetSupporterById(id);
             }
-            catch(Exception)
+            catch (SqlException)
             {
-                    
+                return StatusCode((int) HttpStatusCode.InternalServerError,
+                    "Sorry, something went wrong. Please try again later.");
+            }
+            catch (Exception)
+            {
+                return StatusCode((int) HttpStatusCode.NotFound, "Sorry, it does not look like that person exists.");
             }
 
             var editSupporter = _repo.EditSupporter(editedSupporter);
 
-            return Ok();
+            return Ok($"{editedSupporter.Name} has been updated!");
         }
     }
 }
