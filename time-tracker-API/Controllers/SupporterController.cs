@@ -53,23 +53,21 @@ namespace time_tracker_API.Controllers
                 ManagerId = supporter.ManagerId
             };
 
-            try
-            {
-                var checkSupporter = _repo.GetSupporterById(id);
-            }
-            catch (SqlException)
-            {
-                return StatusCode((int) HttpStatusCode.InternalServerError,
-                    "Sorry, something went wrong. Please try again later.");
-            }
-            catch (Exception)
-            {
-                return StatusCode((int) HttpStatusCode.NotFound, "Sorry, it does not look like that person exists.");
-            }
+            var editSupporter = new SupporterModifier(_repo).EditEmployee(editedSupporter);
 
-            var editSupporter = _repo.EditSupporter(editedSupporter);
-
-            return Ok($"{editedSupporter.Name} has been updated!");
+            switch (editSupporter)
+            {
+               case StatusCodes.Success:
+                   return Ok($"{editedSupporter.Name} has been updated!");
+               case StatusCodes.NotFound:
+                   return StatusCode((int) HttpStatusCode.NotFound, "Sorry, it does not look like that person exists.");
+               case StatusCodes.Unsuccessful:
+                   return StatusCode((int) HttpStatusCode.InternalServerError,
+                       "Sorry, something went wrong. Please try again later.");
+               default: 
+                   return StatusCode((int) HttpStatusCode.InternalServerError,
+                       "Sorry, something went wrong. Please try again later.");
+            }            
         }
     }
 }
