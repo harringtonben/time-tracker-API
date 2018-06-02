@@ -69,25 +69,19 @@ namespace time_tracker_API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            bool checkManager;
-            try
-            {
-                checkManager = _repo.GetManagerById(id);
-            }
-            catch (SqlException)
-            {
-                return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
-            }
-            catch (Exception)
-            {
-                return StatusCode((int) HttpStatusCode.NotFound, "Sorry, it does not look like that person exists.");
-            }
+            var deleteManager = new ManagerModifier(_repo).DeleteManager(id);
 
-            var deleteManager = _repo.DeleteManager(id);
-
-            return deleteManager
-                ? StatusCode((int) HttpStatusCode.OK, "The manager has been deleted.")
-                : StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
+            switch (deleteManager)
+            {
+                case StatusCodes.Success:
+                    return StatusCode((int) HttpStatusCode.OK, "The manager has been deleted.");
+                case StatusCodes.NotFound:
+                    return StatusCode((int) HttpStatusCode.NotFound, "Sorry, it does not look like that person exists.");
+                case StatusCodes.Unsuccessful:
+                    return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
+                default:
+                    return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
+            }
         }
     }
 }
