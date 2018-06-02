@@ -74,25 +74,19 @@ namespace time_tracker_API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            try
-            {
-                var getSupporterById = _repo.GetSupporterById(id);
-            }
-            catch (SqlException)
-            {
-                return StatusCode((int) HttpStatusCode.InternalServerError,
-                    "Sorry, something went wrong. Please try again later.");
-            }
-            catch (Exception)
-            {
-                return StatusCode((int) HttpStatusCode.NotFound, "Sorry, it does not look like that person exists.");
-            }
+            var deleteSupporter = new SupporterModifier(_repo).DeleteEmployee(id);
 
-            var deleteSupporter = _repo.DeleteSupporter(id);
-            
-            return deleteSupporter
-                ? StatusCode((int) HttpStatusCode.OK, "The employee has been deleted.")
-                : StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");  
+            switch (deleteSupporter)
+            {
+                case StatusCodes.Success:
+                    return StatusCode((int) HttpStatusCode.OK, "The employee has been deleted.");
+                case StatusCodes.NotFound:
+                    return StatusCode((int) HttpStatusCode.NotFound, "Sorry, it does not look like that person exists.");
+                case StatusCodes.Unsuccessful:
+                    return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");  
+                default:
+                    return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
+            }
         }
     }
 }
