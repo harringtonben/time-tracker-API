@@ -63,8 +63,31 @@ namespace time_tracker_API.Controllers
                     return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
                 default:
                     return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
+            }        
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            bool checkManager;
+            try
+            {
+                checkManager = _repo.GetManagerById(id);
             }
-                
+            catch (SqlException)
+            {
+                return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
+            }
+            catch (Exception)
+            {
+                return StatusCode((int) HttpStatusCode.NotFound, "Sorry, it does not look like that person exists.");
+            }
+
+            var deleteManager = _repo.DeleteManager(id);
+
+            return deleteManager
+                ? StatusCode((int) HttpStatusCode.OK, "The manager has been deleted.")
+                : StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
         }
     }
 }
