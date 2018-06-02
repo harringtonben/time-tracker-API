@@ -36,5 +36,28 @@ namespace time_tracker_API.Services
                 ? StatusCodes.Success
                 : StatusCodes.Unsuccessful;
         }
+
+        public StatusCodes DeleteManager(int id)
+        {
+            bool checkManager;
+            try
+            {
+                checkManager = _repo.GetManagerById(id);
+            }
+            catch (SqlException)
+            {
+                return StatusCodes.Unsuccessful;
+            }
+            catch (Exception)
+            {
+                return StatusCodes.NotFound;
+            }
+
+            var deleteManager = _repo.DeleteManager(id);
+
+            return deleteManager
+                ? StatusCodes.Success
+                : StatusCodes.Unsuccessful;
+        }
     }
 }

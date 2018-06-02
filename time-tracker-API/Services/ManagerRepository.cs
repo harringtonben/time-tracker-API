@@ -73,5 +73,17 @@ namespace time_tracker_API.Services
                 return result == 1;
             }
         }
+
+        public bool DeleteManager(int id)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Execute("DELETE FROM Managers where ManagerId = @id", new {id});
+
+                return result == 1;
+            }
+        }
     }
 }
