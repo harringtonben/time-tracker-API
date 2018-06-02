@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System;
+using System.Data.SqlClient;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using time_tracker_API.Services;
 
@@ -37,6 +39,32 @@ namespace time_tracker_API.Controllers
                 ? StatusCode((int) HttpStatusCode.Created, $"{newManager.Name} has been added as a manager!")
                 : StatusCode((int) HttpStatusCode.InternalServerError,
                     "Sorry, something went wrong. Please try again later.");
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Edit([FromBody] ManagerDto manager, int id)
+        {
+            var editedManager = new Manager
+            {
+                ManagerId = id,
+                Name = manager.Name,
+                Title = manager.Title
+            };
+            
+            var editManager = new ManagerModifier(_repo).EditManager(editedManager);
+
+            switch (editManager)
+            {
+                case StatusCodes.Success:
+                    return StatusCode((int) HttpStatusCode.OK, $"{editedManager.Name} has been updated!");
+                case StatusCodes.NotFound:
+                    return StatusCode((int) HttpStatusCode.NotFound, "Sorry, it does not look like that person exists.");
+                case StatusCodes.Unsuccessful:
+                    return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
+                default:
+                    return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
+            }
+                
         }
     }
 }

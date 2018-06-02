@@ -32,6 +32,7 @@ namespace time_tracker_API.Services
             using (var db = new SqlConnection(_connectionString))
             {
                 db.Open();
+                
                 var result = db.Execute(@"INSERT INTO Managers
                                                             (
                                                               Name,
@@ -42,6 +43,32 @@ namespace time_tracker_API.Services
                                                               @Name,
                                                               @Title
                                                             )", newManager);
+
+                return result == 1;
+            }
+        }
+
+        public bool GetManagerById(int id)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.QueryFirst("SELECT * FROM Managers WHERE ManagerId = @id", new {id});
+
+                return result != null;
+            }
+        }
+
+        public bool EditManager(Manager editedManager)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Execute(@"UPDATE Managers
+                                          SET Name = @Name, Title = @Title
+                                          WHERE ManagerId = @ManagerId", editedManager);
 
                 return result == 1;
             }
