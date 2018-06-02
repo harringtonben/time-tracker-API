@@ -28,7 +28,7 @@ namespace time_tracker_API.Controllers
             {
                 getShiftByDate = _repo.GetShiftByDate(id, date);
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 return StatusCode((int) HttpStatusCode.InternalServerError,
                     $"It does not appear that there is a shift for this employee on {date}");
