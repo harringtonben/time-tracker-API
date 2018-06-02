@@ -47,6 +47,7 @@ namespace time_tracker_API
             services.AddSingleton<IEmailSender, EmailSender>();
             services.Configure<DatabaseOptions>(Configuration.GetSection("ConnectionStrings:timetracker"));
             services.AddScoped<SupporterRepository>();
+            services.AddScoped<ManagerRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
