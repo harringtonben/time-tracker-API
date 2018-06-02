@@ -26,12 +26,10 @@ namespace time_tracker_API.Services
                 return result;
             }
         }
-    }
-    
-    public class Manager
-    {
-        public int ManagerId { get; set; }
-        public string Name { get; set; }
-        public string Title { get; set; }  
+
+        public bool AddNewManager(Manager newManager)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

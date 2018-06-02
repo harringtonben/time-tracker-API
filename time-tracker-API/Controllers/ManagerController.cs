@@ -21,5 +21,22 @@ namespace time_tracker_API.Controllers
 
             return StatusCode((int) HttpStatusCode.OK, getAllManagers);
         }
+
+        [HttpPost]
+        public IActionResult Add([FromBody] ManagerDto manager)
+        {
+            var newManager = new Manager
+            {
+                Name = manager.Name,
+                Title = manager.Title
+            };
+
+            var addNewManager = _repo.AddNewManager(newManager);
+
+            return addNewManager
+                ? StatusCode((int) HttpStatusCode.Created, $"{newManager.Name} has been added as a manager!")
+                : StatusCode((int) HttpStatusCode.InternalServerError,
+                    "Sorry, something went wrong. Please try again later.");
+        }
     }
 }
