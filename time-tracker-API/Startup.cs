@@ -48,6 +48,7 @@ namespace time_tracker_API
             services.Configure<DatabaseOptions>(Configuration.GetSection("ConnectionStrings:timetracker"));
             services.AddScoped<SupporterRepository>();
             services.AddScoped<ManagerRepository>();
+            services.AddScoped<ShiftRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
