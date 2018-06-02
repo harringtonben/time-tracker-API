@@ -46,5 +46,15 @@ namespace time_tracker_API.Services
                 return result == 1;
             }
         }
+
+        public bool GetManagerById(int editedManagerManagerId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool EditManager(Manager editedManager)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
