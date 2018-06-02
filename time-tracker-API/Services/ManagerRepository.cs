@@ -29,7 +29,22 @@ namespace time_tracker_API.Services
 
         public bool AddNewManager(Manager newManager)
         {
-            throw new System.NotImplementedException();
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+                var result = db.Execute(@"INSERT INTO Managers
+                                                            (
+                                                              Name,
+                                                              Title
+                                                            )
+                                                      VALUES
+                                                            (
+                                                              @Name,
+                                                              @Title
+                                                            )", newManager);
+
+                return result == 1;
+            }
         }
     }
 }
