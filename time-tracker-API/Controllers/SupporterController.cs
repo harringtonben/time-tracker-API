@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using time_tracker_API.Services;
 
 namespace time_tracker_API.Controllers
@@ -58,7 +59,7 @@ namespace time_tracker_API.Controllers
             switch (editSupporter)
             {
                case StatusCodes.Success:
-                   return Ok($"{editedSupporter.Name} has been updated!");
+                   return StatusCode((int) HttpStatusCode.OK, $"{editedSupporter.Name} has been updated!");
                case StatusCodes.NotFound:
                    return StatusCode((int) HttpStatusCode.NotFound, "Sorry, it does not look like that person exists.");
                case StatusCodes.Unsuccessful:
@@ -68,6 +69,24 @@ namespace time_tracker_API.Controllers
                    return StatusCode((int) HttpStatusCode.InternalServerError,
                        "Sorry, something went wrong. Please try again later.");
             }            
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var deleteSupporter = new SupporterModifier(_repo).DeleteEmployee(id);
+
+            switch (deleteSupporter)
+            {
+                case StatusCodes.Success:
+                    return StatusCode((int) HttpStatusCode.OK, "The employee has been deleted.");
+                case StatusCodes.NotFound:
+                    return StatusCode((int) HttpStatusCode.NotFound, "Sorry, it does not look like that person exists.");
+                case StatusCodes.Unsuccessful:
+                    return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");  
+                default:
+                    return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
+            }
         }
     }
 }

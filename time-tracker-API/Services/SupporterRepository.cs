@@ -80,5 +80,17 @@ namespace time_tracker_API.Services
                 return result != null;
             }   
         }
+
+        public bool DeleteSupporter(int id)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Execute("DELETE FROM Employees WHERE employeeId = @id", new {id});
+
+                return result == 1;
+            }
+        }
     }
 }
