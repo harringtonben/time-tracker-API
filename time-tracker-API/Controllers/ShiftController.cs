@@ -39,7 +39,7 @@ namespace time_tracker_API.Controllers
         }
         
         [HttpPut("{id}")]
-        public IActionResult EditShift(int id, [FromQuery] ShiftDto shift)
+        public IActionResult EditShift(int id, [FromBody] ShiftDto shift)
         {
             var shiftToEdit = new Shift
             {
