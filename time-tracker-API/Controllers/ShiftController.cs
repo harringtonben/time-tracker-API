@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using time_tracker_API.Services;
 
 namespace time_tracker_API.Controllers
@@ -19,7 +20,7 @@ namespace time_tracker_API.Controllers
         [HttpGet("{id}")]
         public IActionResult GetShiftByDate(int id, [FromQuery] string date)
         {
-            IndividualShift getShiftByDate;
+            Shift getShiftByDate;
             
             if (date == null)
                 return StatusCode((int) HttpStatusCode.BadRequest, "Please enter a date in order to see the shift");
@@ -40,23 +41,45 @@ namespace time_tracker_API.Controllers
         [HttpPut("{id}")]
         public IActionResult EditShift(int id, [FromQuery] ShiftDto shift)
         {
-            return Ok();
-        }
-    }
+            var shiftToEdit = new Shift
+            {
+                ShiftId = id,
+                Date = shift.Date,
+                EmployeeId = shift.EmployeeId,
+                ManagerId = shift.ManagerId,
+                WorkFromHome = shift.WorkFromHome,
+                Callout = shift.Callout,
+                Planned = shift.Planned,
+                ShiftLengthId = shift.ShiftLengthId,
+                Email = shift.Email,
+                Phone = shift.Phone,
+                Integrations = shift.Integrations,
+                NonCoverage = shift.NonCoverage
+            };
 
-    public class ShiftDto
-    {
-        public int ShiftId { get; set; }
-        public DateTime Date { get; set; }
-        public int EmployeeId { get; set; }
-        public int ManagerId { get; set; }
-        public bool WorkFromHome { get; set; }
-        public bool Callout { get; set; }
-        public bool Planned { get; set; }
-        public int ShiftLengthId { get; set; }
-        public bool email { get; set; }
-        public bool phone { get; set; }
-        public bool integrations { get; set; }
-        public bool NonCoverage { get; set; }
+            bool getShift;
+
+            try
+            {
+                getShift = _repo.GetShiftById(shiftToEdit.ShiftId);
+            }
+            catch (SqlException)
+            {
+                return StatusCode((int) HttpStatusCode.InternalServerError,
+                    "Sorry, something went wrong. Please try again later.");
+            }
+            catch (Exception)
+            {
+                return StatusCode((int) HttpStatusCode.NotFound,
+                    "There does not appear to be a shift associated with that day.");
+            }
+
+            var updateShift = _repo.EditShift(shiftToEdit);
+
+            return updateShift
+                ? StatusCode((int) HttpStatusCode.OK, "The shift has been edited!")
+                : StatusCode((int) HttpStatusCode.InternalServerError,
+                    "Sorry, something went wrong. Please try again later.");
+        }
     }
 }
