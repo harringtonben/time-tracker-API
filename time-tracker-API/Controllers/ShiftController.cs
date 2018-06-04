@@ -36,5 +36,27 @@ namespace time_tracker_API.Controllers
             
             return StatusCode((int) HttpStatusCode.OK, getShiftByDate);
         }
+        
+        [HttpPut("{id}")]
+        public IActionResult EditShift(int id, [FromQuery] ShiftDto shift)
+        {
+            return Ok();
+        }
+    }
+
+    public class ShiftDto
+    {
+        public int ShiftId { get; set; }
+        public DateTime Date { get; set; }
+        public int EmployeeId { get; set; }
+        public int ManagerId { get; set; }
+        public bool WorkFromHome { get; set; }
+        public bool Callout { get; set; }
+        public bool Planned { get; set; }
+        public int ShiftLengthId { get; set; }
+        public bool email { get; set; }
+        public bool phone { get; set; }
+        public bool integrations { get; set; }
+        public bool NonCoverage { get; set; }
     }
 }
