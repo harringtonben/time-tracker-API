@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using Dapper;
 using Microsoft.Extensions.Options;
 
@@ -14,13 +13,13 @@ namespace time_tracker_API.Services
             _connectionString = dbOptions.Value.ConnectionString;
         }
         
-        public IndividualShift GetShiftByDate(int id, string date)
+        public Shift GetShiftByDate(int id, string date)
         {
             using (var db = new SqlConnection(_connectionString))
             {
                 db.Open();
 
-                var result = db.QueryFirst<IndividualShift>(@"SELECT s.*, L.ShiftLengthName FROM Shifts s
+                var result = db.QueryFirst<Shift>(@"SELECT s.*, L.ShiftLengthName FROM Shifts s
                                                               join ShiftLength L on s.ShiftLengthId = L.ShiftLengthId
                                                               WHERE EmployeeId = @id
                                                               AND Date = @date", new {id, date});
@@ -28,22 +27,40 @@ namespace time_tracker_API.Services
                 return result;
             }
         }
-    }
 
-    public class IndividualShift
-    {
-        public int ShiftId { get; set; }
-        public DateTime Date { get; set; }
-        public int EmployeeId { get; set; }
-        public int ManagerId { get; set; }
-        public bool WorkFromHome { get; set; }
-        public bool Callout { get; set; }
-        public bool Planned { get; set; }
-        public bool ShiftLengthId { get; set; }
-        public bool Email { get; set; }
-        public bool Phone { get; set; }
-        public bool Integrations { get; set; }
-        public bool NonCoverage { get; set; }
-        public string ShiftLengthName { get; set; }
+        public bool GetShiftById(int id)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.QueryFirst("SELECT * FROM Shifts WHERE ShiftId = @id", new {id});
+
+                return result != null;
+            }
+        }
+
+        public bool EditShift(Shift shift)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Execute(@"UPDATE Shifts
+                                                  SET Date = @Date,
+                                                      EmployeeId = @EmployeeId,
+                                                      MangerId = @ManagerId,
+                                                      WorkFromHome = @WorkFromHome,
+                                                      Callout = @Callout, Planned = @Planned,
+                                                      ShiftLengthId = @ShiftLengthId,
+                                                      Email = @Email,
+                                                      Phone = @Phone,
+                                                      Integrations = @Integrations,
+                                                      NonCoverage = @NonCoverage
+                                                  WHERE ShiftId = @ShiftId", shift);
+
+                return result == 1;
+            }
+        }
     }
 }
