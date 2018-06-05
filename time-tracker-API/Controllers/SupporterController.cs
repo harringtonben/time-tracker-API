@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
@@ -103,7 +104,36 @@ namespace time_tracker_API.Controllers
             }
 
             return StatusCode((int) HttpStatusCode.OK, supporter);
-
         }
+
+        [HttpGet("teammetrics")]
+        public IActionResult GetTeamMetrics([FromQuery] int timeframe)
+        {
+            List<SupporterTeamMetric> supportTeamMetrics;
+
+            try
+            {
+                supportTeamMetrics = _repo.GetTeamMetrics(timeframe);
+            }
+            catch (Exception)
+            {
+                return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
+            }
+
+            return StatusCode((int) HttpStatusCode.OK, supportTeamMetrics);
+        }
+    }
+
+    public class SupporterTeamMetric
+    {
+        public int EmployeeId { get; set; }
+        public string Name { get; set; }
+        public int? TotalWorkedFromHome { get; set; }
+        public int? TotalCalledOut { get; set; }
+        public int? TotalUnplannedOut { get; set; }
+        public int? PhoneDays { get; set; }
+        public int? EmailDays { get; set; }
+        public int? IntegrationsDays { get; set; }
+        public int? NonCoverageDays { get; set; }
     }
 }
