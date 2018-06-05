@@ -206,6 +206,91 @@ namespace time_tracker_API.Services
                 return result;
             }
         }
+
+        public List<ReportMetrics> AllShiftsAllStaff(int timeframe)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> AllShiftsPerEmployee(int timeframe, int employeeId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> AllWorkFromHomeAllStaff(int timeframe)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> AllWorkFromHomePerEmployee(int timeframe, int employeeId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> AllCalloutsAllStaff(int timeframe)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> AllCalloutsPerEmployee(int timeframe)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> AllShiftsByManager(int timeframe, int managerId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> PlannedvsUnplannedSickAllStaff(int timeframe)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> PlannedvsUnplannedSickPerEmployee(int timeframe, int employeeId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> AllEmailDaysAllStaff(int timeframe)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> AllEmailDaysPerEmployee(int timeframe, int employeeId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> AllPhoneDaysAllStaff(int timeframe)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> AllPhoneDaysPerEmployee(int timeframe, int employeeId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> TotalPhoneDaysAllStaff(int timeframe)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> TotalPhoneDaysPerEmployee(int timeframe, int employeeId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> TotalEmailDaysAllStaff(int timeframe)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ReportMetrics> TotalEmailDaysPerEmployee(int timeframe, int employeeId)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
 
