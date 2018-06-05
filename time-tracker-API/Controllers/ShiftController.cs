@@ -17,6 +17,40 @@ namespace time_tracker_API.Controllers
             _repo = repo;
         }
 
+        [HttpPost]
+        public IActionResult Add([FromBody] ShiftDto shift)
+        {
+            var newShift = new Shift
+            {
+                Date = shift.Date,
+                EmployeeId = shift.EmployeeId,
+                ManagerId = shift.ManagerId,
+                WorkFromHome = shift.WorkFromHome,
+                Callout = shift.Callout,
+                Planned = shift.Planned,
+                ShiftLengthId = shift.ShiftLengthId,
+                Email = shift.Email,
+                Phone = shift.Phone,
+                Integrations = shift.Integrations,
+                NonCoverage = shift.NonCoverage
+            };
+
+            bool addShift;
+
+            try
+            {
+                addShift = _repo.AddShift(newShift);
+            }
+            catch (Exception)
+            {
+                return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
+            }
+            return addShift
+                ? StatusCode((int) HttpStatusCode.Created, "Shift has been added!")
+                : StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
+
+        }
+
         [HttpGet("{id}")]
         public IActionResult GetShiftByDate(int id, [FromQuery] string date)
         {

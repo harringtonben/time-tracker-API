@@ -62,5 +62,44 @@ namespace time_tracker_API.Services
                 return result == 1;
             }
         }
+
+        public bool AddShift(Shift newShift)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Execute(@"INSERT INTO Shifts
+                                                      (
+                                                        Date,
+                                                        EmployeeId,
+                                                        ManagerId,
+                                                        WorkFromHome,
+                                                        Callout,
+                                                        Planned,
+                                                        ShiftLengthId,
+                                                        Email,
+                                                        Phone,
+                                                        Integrations,
+                                                        NonCoverage
+                                                      )
+                                                    VALUES
+                                                      (
+                                                        @Date,
+                                                        @EmployeeId,
+                                                        @ManagerId,
+                                                        @WorkFromHome,
+                                                        @Callout,
+                                                        @Planned,
+                                                        @ShiftLengthId,
+                                                        @Email,
+                                                        @Phone,
+                                                        @Integrations,
+                                                        @NonCoverage
+                                                      )", newShift);
+
+                return result == 1;
+            }
+        }
     }
 }
