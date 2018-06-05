@@ -17,6 +17,32 @@ namespace time_tracker_API.Controllers
             _repo = repo;
         }
 
+        [HttpPost]
+        public IActionResult Add([FromBody] ShiftDto shift)
+        {
+            var newShift = new Shift
+            {
+                Date = shift.Date,
+                EmployeeId = shift.EmployeeId,
+                ManagerId = shift.ManagerId,
+                WorkFromHome = shift.WorkFromHome,
+                Callout = shift.Callout,
+                Planned = shift.Planned,
+                ShiftLengthId = shift.ShiftLengthId,
+                Email = shift.Email,
+                Phone = shift.Phone,
+                Integrations = shift.Integrations,
+                NonCoverage = shift.NonCoverage
+            };
+
+            var addShift = _repo.AddShift(newShift);
+
+            return addShift
+                ? StatusCode((int) HttpStatusCode.Created, "Shift has been added!")
+                : StatusCode((int) HttpStatusCode.InternalServerError, "There does not appear to be a shift associated with that day.");
+
+        }
+
         [HttpGet("{id}")]
         public IActionResult GetShiftByDate(int id, [FromQuery] string date)
         {
