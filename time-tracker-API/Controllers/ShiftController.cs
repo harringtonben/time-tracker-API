@@ -56,30 +56,23 @@ namespace time_tracker_API.Controllers
                 Integrations = shift.Integrations,
                 NonCoverage = shift.NonCoverage
             };
+            
+            var editShift = new ShiftModifier(_repo).EditShift(shiftToEdit);
 
-            bool getShift;
-
-            try
+            switch (editShift)
             {
-                getShift = _repo.GetShiftById(shiftToEdit.ShiftId);
+                case StatusCodes.Success:
+                    return StatusCode((int) HttpStatusCode.OK, "The shift has been edited!");
+                case StatusCodes.NotFound: 
+                    return StatusCode((int) HttpStatusCode.NotFound,
+                        "There does not appear to be a shift associated with that day.");
+                case StatusCodes.Unsuccessful:
+                    return StatusCode((int) HttpStatusCode.InternalServerError,
+                        "Sorry, something went wrong. Please try again later.");
+                default:
+                    return StatusCode((int) HttpStatusCode.InternalServerError,
+                        "Sorry, something went wrong. Please try again later.");
             }
-            catch (SqlException)
-            {
-                return StatusCode((int) HttpStatusCode.InternalServerError,
-                    "Sorry, something went wrong. Please try again later.");
-            }
-            catch (Exception)
-            {
-                return StatusCode((int) HttpStatusCode.NotFound,
-                    "There does not appear to be a shift associated with that day.");
-            }
-
-            var updateShift = _repo.EditShift(shiftToEdit);
-
-            return updateShift
-                ? StatusCode((int) HttpStatusCode.OK, "The shift has been edited!")
-                : StatusCode((int) HttpStatusCode.InternalServerError,
-                    "Sorry, something went wrong. Please try again later.");
         }
     }
 }
