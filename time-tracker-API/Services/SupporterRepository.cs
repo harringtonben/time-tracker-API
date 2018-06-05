@@ -92,6 +92,48 @@ namespace time_tracker_API.Services
                 return result == 1;
             }
         }
+
+        public SupporterMetric GetSupportMetrics(int id, int days)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.QueryFirst<SupporterMetric>(@"WITH WorkFromHomeCTE (EmployeId, TotalWorkedFromHome) AS
+                                                                (
+                                                                SELECT EmployeeId, COUNT(*) FROM Shifts
+                                                                WHERE WorkFromHome = 1
+                                                                AND EmployeeId = @id
+                                                                AND Date > GETDATE() - @days
+                                                                GROUP BY EmployeeId
+                                                                ),
+                                                                CalloutCTE (EmployeeId, TotalCalledOut) AS
+                                                                (
+                                                                SELECT EmployeeId, COUNT(*) FROM Shifts
+                                                                WHERE Callout = 1
+                                                                AND EmployeeId = @id
+                                                                AND Date > GETDATE() - @days
+                                                                GROUP BY EmployeeId
+                                                                ),
+                                                                UnplannedCalloutCTE (EmployeeId, TotalUnplannedOut) as
+                                                                (
+                                                                SELECT EmployeeId, COUNT(*) FROM Shifts
+                                                                WHERE Callout = 1
+                                                                AND Planned = 0
+                                                                AND EmployeeId = @id
+                                                                AND Date > GETDATE() - @days
+                                                                GROUP BY EmployeeId
+                                                                )
+                                                                
+                                                                SELECT DISTINCT e.EmployeeId, e.Name, w.TotalWorkedFromHome, c.TotalCalledOut, u.TotalUnplannedOut from Employees e
+                                                                LEFT JOIN  WorkFromHomeCTE w on w.EmployeId = e.EmployeeId
+                                                                LEFT JOIN CalloutCTE c on c.EmployeeId = e.EmployeeId
+                                                                LEFT JOIN UnplannedCalloutCTE u on u.EmployeeId = e.EmployeeId
+                                                                WHERE e.EmployeeId = @id", new {id, days});
+
+                return result;
+            }
+        }
     }
 }
 
