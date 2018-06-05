@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols;
+using time_tracker_API.Controllers;
 
 namespace time_tracker_API.Services
 {
@@ -130,6 +131,77 @@ namespace time_tracker_API.Services
                                                                 LEFT JOIN CalloutCTE c on c.EmployeeId = e.EmployeeId
                                                                 LEFT JOIN UnplannedCalloutCTE u on u.EmployeeId = e.EmployeeId
                                                                 WHERE e.EmployeeId = @id", new {id, days});
+
+                return result;
+            }
+        }
+
+        public List<SupporterTeamMetric> GetTeamMetrics(int timeframe)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<SupporterTeamMetric>(@"WITH WorkFromHomeCTE (EmployeId, TotalWorkedFromHome) AS
+                                                                (
+                                                                SELECT EmployeeId, COUNT(*) FROM Shifts
+                                                                WHERE WorkFromHome = 1
+                                                                AND Date > GETDATE() - @timeframe
+                                                                GROUP BY EmployeeId
+                                                                ),
+                                                                CalloutCTE (EmployeeId, TotalCalledOut) AS
+                                                                (
+                                                                SELECT EmployeeId, COUNT(*) FROM Shifts
+                                                                WHERE Callout = 1
+                                                                AND Date > GETDATE() - @timeframe
+                                                                GROUP BY EmployeeId
+                                                                ),
+                                                                UnplannedCalloutCTE (EmployeeId, TotalUnplannedOut) as
+                                                                (
+                                                                SELECT EmployeeId, COUNT(*) FROM Shifts
+                                                                WHERE Callout = 1
+                                                                AND Planned = 0
+                                                                AND Date > GETDATE() - @timeframe
+                                                                GROUP BY EmployeeId
+                                                                ),
+                                                                PhoneDays (EmployeeId, PhoneDays) as
+                                                                (
+                                                                SELECT EmployeeId, COUNT(*) FROM Shifts
+                                                                WHERE Phone = 1
+                                                                AND Date > GETDATE() - @timeframe
+                                                                GROUP BY EmployeeId
+                                                                ),
+                                                                EmailDays (EmployeeId, EmailDays) as
+                                                                (
+                                                                SELECT EmployeeId, COUNT(*) FROM Shifts
+                                                                WHERE Email = 1
+                                                                AND Date > GETDATE() - @timeframe
+                                                                GROUP BY EmployeeId
+                                                                ),
+                                                                IntegrationsDays (EmployeeId, IntegrationsDays) as
+                                                                (
+                                                                SELECT EmployeeId, COUNT(*) FROM Shifts
+                                                                WHERE Integrations = 1
+                                                                AND Date > GETDATE() - @timeframe
+                                                                GROUP BY EmployeeId
+                                                                ),
+                                                                NonCoverageDays (EmployeeId, NonCoverageDays) as
+                                                                (
+                                                                SELECT EmployeeId, COUNT(*) FROM Shifts
+                                                                WHERE NonCoverage= 1
+                                                                AND Date > GETDATE() - @timeframe
+                                                                GROUP BY EmployeeId
+                                                                )
+                                                                
+                                                                SELECT DISTINCT e.EmployeeId, e.Name, w.TotalWorkedFromHome, c.TotalCalledOut, u.TotalUnplannedOut, p.PhoneDays, em.EmailDays, i.IntegrationsDays, n.NonCoverageDays from Employees e
+                                                                LEFT JOIN  WorkFromHomeCTE w on w.EmployeId = e.EmployeeId
+                                                                LEFT JOIN CalloutCTE c on c.EmployeeId = e.EmployeeId
+                                                                LEFT JOIN UnplannedCalloutCTE u on u.EmployeeId = e.EmployeeId
+                                                                LEFT JOIN PhoneDays p on p.EmployeeId = e.EmployeeId
+                                                                LEFT JOIN EmailDays em on em.EmployeeId = e.EmployeeId
+                                                                LEFT JOIN IntegrationsDays i on i.EmployeeId = e.EmployeeId
+                                                                LEFT JOIN NonCoverageDays n on n.EmployeeId = e.EmployeeId",
+                    new {timeframe}).ToList();
 
                 return result;
             }
