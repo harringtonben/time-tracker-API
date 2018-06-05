@@ -88,5 +88,22 @@ namespace time_tracker_API.Controllers
                     return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
             }
         }
+
+        [HttpGet("{id}")]
+        public IActionResult GetMetrics(int id, [FromQuery] int timeframe)
+        {
+            SupporterMetric supporter;
+            try
+            {
+                supporter = _repo.GetSupportMetrics(id, timeframe);
+            }
+            catch (Exception e)
+            {
+                return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");  
+            }
+
+            return StatusCode((int) HttpStatusCode.OK, supporter);
+
+        }
     }
 }
