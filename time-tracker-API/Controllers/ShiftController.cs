@@ -35,11 +35,19 @@ namespace time_tracker_API.Controllers
                 NonCoverage = shift.NonCoverage
             };
 
-            var addShift = _repo.AddShift(newShift);
+            bool addShift;
 
+            try
+            {
+                addShift = _repo.AddShift(newShift);
+            }
+            catch (Exception)
+            {
+                return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
+            }
             return addShift
                 ? StatusCode((int) HttpStatusCode.Created, "Shift has been added!")
-                : StatusCode((int) HttpStatusCode.InternalServerError, "There does not appear to be a shift associated with that day.");
+                : StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");
 
         }
 
