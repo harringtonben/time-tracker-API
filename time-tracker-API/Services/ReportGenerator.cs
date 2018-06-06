@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using time_tracker_API.Controllers;
 
 namespace time_tracker_API.Services
@@ -13,7 +14,7 @@ namespace time_tracker_API.Services
         }
 
 
-        public object GenerateReport(Reports report, int employeeId, int managerId, int timeframe)
+        public List<ReportMetrics> GenerateReport(Reports report, int employeeId, int managerId, int timeframe)
         {
             List<ReportMetrics> metrics;
             
@@ -21,24 +22,30 @@ namespace time_tracker_API.Services
             {
                 case Reports.AllShiftsWithinXWeeks:
                     if (employeeId == 0)
+                    {
                         metrics = _repo.AllShiftsAllStaff(timeframe);
-                    
+                        return metrics;
+                    }
+
                     metrics = _repo.AllShiftsPerEmployee(timeframe, employeeId);
-                    
                     return metrics;
                 case Reports.WorkfromHomeWithinXWeeks:
                     if (employeeId == 0)
+                    {
                         metrics = _repo.AllWorkFromHomeAllStaff(timeframe);
+                        return metrics;
+                    }
 
                     metrics = _repo.AllWorkFromHomePerEmployee(timeframe, employeeId);
-                    
                     return metrics;
                 case Reports.UnplannedCalloutsWithinXWeeks:
                     if (employeeId == 0)
+                    {
                         metrics = _repo.AllCalloutsAllStaff(timeframe);
-                    
-                    metrics = _repo.AllCalloutsPerEmployee(timeframe, employeeId);
+                        return metrics;
+                    }
 
+                    metrics = _repo.AllCalloutsPerEmployee(timeframe, employeeId);
                     return metrics;
                 case Reports.AllShiftsByManagerWithinXWeeks:
                     metrics = _repo.AllShiftsByManager(timeframe, managerId);
@@ -46,38 +53,48 @@ namespace time_tracker_API.Services
                     return metrics;
                 case Reports.UnplannedVsPlannedSickDaysWithinXWeeks:
                     if (employeeId == 0)
+                    {
                         metrics = _repo.PlannedvsUnplannedSickAllStaff(timeframe);
-                    
-                    metrics = _repo.PlannedvsUnplannedSickPerEmployee(timeframe, employeeId);
+                        return metrics;
+                    }
 
+                    metrics = _repo.PlannedvsUnplannedSickPerEmployee(timeframe, employeeId);
                     return metrics;
                 case Reports.AllEmailDays:
                     if (employeeId == 0)
+                    {
                         metrics = _repo.AllEmailDaysAllStaff(timeframe);
-                    
-                    metrics = _repo.AllEmailDaysPerEmployee(timeframe, employeeId);
+                        return metrics;
+                    }
 
+                    metrics = _repo.AllEmailDaysPerEmployee(timeframe, employeeId);
                     return metrics;
                 case Reports.AllPhoneDays:
                     if (employeeId == 0)
+                    {
                         metrics = _repo.AllPhoneDaysAllStaff(timeframe);
+                        return metrics;
+                    }
 
                     metrics = _repo.AllPhoneDaysPerEmployee(timeframe, employeeId);
-
                     return metrics;
                 case Reports.TotalPhoneDays:
                     if (employeeId == 0)
+                    {
                         metrics = _repo.TotalPhoneDaysAllStaff(timeframe);
+                        return metrics;
+                    }
 
                     metrics = _repo.TotalPhoneDaysPerEmployee(timeframe, employeeId);
-
                     return metrics;
                 case Reports.TotalEmailDays:
                     if (employeeId == 0)
+                    {
                         metrics = _repo.TotalEmailDaysAllStaff(timeframe);
+                        return metrics;
+                    }
 
                     metrics = _repo.TotalEmailDaysPerEmployee(timeframe, employeeId);
-
                     return metrics;
                 default:
                     return null;
@@ -88,15 +105,16 @@ namespace time_tracker_API.Services
     public class ReportMetrics
     {
         public int ShiftId { get; set; }
+        public DateTime Date { get; set; }
         public int EmployeeId { get; set; }
         public string Name { get; set; }
-        public int? TotalWorkedFromHome { get; set; }
-        public int? TotalCalledOut { get; set; }
-        public int? TotalUnplannedOut { get; set; }
-        public int? PhoneDays { get; set; }
-        public int? EmailDays { get; set; }
-        public int? IntegrationsDays { get; set; }
-        public int? NonCoverageDays { get; set; }
+        public bool WorkFromHome { get; set; }
+        public bool Callout { get; set; }
+        public bool Planned { get; set; }
+        public bool Phone { get; set; }
+        public bool Email { get; set; }
+        public bool Integrations { get; set; }
+        public bool NonCoverage { get; set; }
         public int? UnplannedSickTime { get; set; }
         public int? TotalPhoneDays { get; set; }
         public int? TotalEmailDays { get; set; }

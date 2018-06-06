@@ -127,10 +127,20 @@ namespace time_tracker_API.Controllers
         public IActionResult GetReports(int id, [FromQuery] int employeeId, int managerId, int timeframe)
         {
             var report = (Reports) id;
-            
-            var myReports = new ReportGenerator(_repo).GenerateReport(report, employeeId, managerId, timeframe);
 
-            return Ok();
+            List<ReportMetrics> myReports;
+
+            try
+            {
+                myReports = new ReportGenerator(_repo).GenerateReport(report, employeeId, managerId, timeframe);
+            }
+            catch (Exception)
+            {
+                return StatusCode((int) HttpStatusCode.InternalServerError,
+                    "Sorry, something went wrong. Please try again later.");
+            }
+
+            return StatusCode((int) HttpStatusCode.OK, myReports);
         }
     }
 
