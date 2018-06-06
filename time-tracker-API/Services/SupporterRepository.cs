@@ -206,6 +206,304 @@ namespace time_tracker_API.Services
                 return result;
             }
         }
+
+        public List<ReportMetrics> AllShiftsAllStaff(int timeframe)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"select s.*, e.name from Shifts s
+                                                        join Employees e on e.employeeid = s.employeeid
+                                                        where date > getdate() - @timeframe", new {timeframe}).ToList();
+
+                return result;
+            }
+        }
+
+        public List<ReportMetrics> AllShiftsPerEmployee(int timeframe, int employeeId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"select s.*, e.name from Shifts s
+                                                        join Employees e on e.employeeid = s.employeeid
+                                                        where s.EmployeeId = @employeeId
+                                                        and date > getdate() - @timeframe", new {employeeId, timeframe}).ToList();
+
+                return result;      
+            }
+        }
+
+        public List<ReportMetrics> AllWorkFromHomeAllStaff(int timeframe)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"select s.*, e.name from Shifts s
+                                                        join Employees e on e.employeeid = s.employeeid
+                                                        where date > getdate() - @timeframe
+                                                        and WorkFromHome = 1", new {timeframe}).ToList();
+
+                return result;
+            }
+        }
+
+        public List<ReportMetrics> AllWorkFromHomePerEmployee(int timeframe, int employeeId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"select s.*, e.name from Shifts s
+                                                        join Employees e on e.employeeid = s.employeeid
+                                                        where s.EmployeeId = @employeeId
+                                                        and date > getdate() - @timeframe
+                                                        and WorkFromHome = 1", new {employeeId, timeframe}).ToList();
+
+                return result;
+            }
+        }
+
+        public List<ReportMetrics> AllCalloutsAllStaff(int timeframe)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"select s.*, e.name from Shifts s
+                                                        join Employees e on e.employeeid = s.employeeid
+                                                        where date > getdate() - @timeframe
+                                                        and Callout = 1
+                                                        and Planned = 0", new {timeframe}).ToList();
+
+                return result;
+            }
+        }
+
+        public List<ReportMetrics> AllCalloutsPerEmployee(int timeframe, int employeeId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"select s.*, e.name from Shifts s
+                                                        join Employees e on e.employeeid = s.employeeid
+                                                        where s.EmployeeId = @employeeId
+                                                        and date > getdate() - @timeframe
+                                                        and Callout = 1
+                                                        and Planned = 0", new {employeeId, timeframe}).ToList();
+
+                return result;
+            }
+        }
+
+        public List<ReportMetrics> AllShiftsByManager(int timeframe, int managerId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"select s.*, e.name from Shifts s
+                                                        join Employees e on e.employeeid = s.employeeid
+                                                        where s.ManagerId = @managerId
+                                                        and date > getdate() - @timeframe", new {managerId, timeframe}).ToList();
+
+                return result;
+            }
+        }
+
+        public List<ReportMetrics> PlannedvsUnplannedSickAllStaff(int timeframe)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"with callout_cte (sickdays, employeeid) as
+                                                        (
+                                                        select count(*) as sickdays, EmployeeId from shifts
+                                                        where date > getdate() - @timeframe
+                                                        and Callout = 1
+                                                        and Planned = 0
+                                                        group by EmployeeId
+                                                        ),
+                                                        allshift_cte (allworkdays, employeeid) as
+                                                        (
+                                                        select count(*) as allworkdays, EmployeeId from Shifts
+                                                        where date > getdate() - @timeframe
+                                                        group by EmployeeId
+                                                        )
+                                                        select distinct (c.sickdays * 100)/a.allworkdays as unplannedsicktime, e.Name from shifts s
+                                                        join callout_cte c on c.employeeid = s.EmployeeId
+                                                        join allshift_cte a on a.employeeid = s.EmployeeId
+                                                        join Employees e on e.employeeId = s.employeeId
+                                                        ", new {timeframe}).ToList();
+
+                return result;   
+            }
+        }
+
+        public List<ReportMetrics> PlannedvsUnplannedSickPerEmployee(int timeframe, int employeeId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"with callout_cte (sickdays, employeeid) as
+                                                        (
+                                                        select count(*) as sickdays, EmployeeId from shifts
+                                                        where EmployeeId = @employeeId
+                                                        and date > getdate() - @timeframe
+                                                        and Callout = 1
+                                                        and Planned = 0
+                                                        group by EmployeeId
+                                                        ),
+                                                        allshift_cte (allworkdays, employeeid) as
+                                                        (
+                                                        select count(*) as allworkdays, EmployeeId from Shifts
+                                                        where EmployeeId = @employeeId
+                                                        and date > getdate() - @timeframe
+                                                        group by EmployeeId
+                                                        )
+                                                        select distinct (c.sickdays * 100)/a.allworkdays as unplannedsicktime, e.Name from shifts s
+                                                        join callout_cte c on c.employeeid = s.EmployeeId
+                                                        join allshift_cte a on a.employeeid = s.EmployeeId
+                                                        join Employees e on e.employeeId = s.employeeId
+                                                        ", new {employeeId, timeframe}).ToList();
+
+                return result;   
+            }
+        }
+
+        public List<ReportMetrics> AllEmailDaysAllStaff(int timeframe)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"select s.*, e.name from Shifts s
+                                                        join Employees e on e.employeeid = s.employeeid
+                                                        where date > getdate() - @timeframe
+                                                        and Email = 1", new {timeframe}).ToList();
+
+                return result;    
+            }
+        }
+
+        public List<ReportMetrics> AllEmailDaysPerEmployee(int timeframe, int employeeId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"select s.*, e.name from Shifts s
+                                                        join Employees e on e.employeeid = s.employeeid
+                                                        where date > getdate() - @timeframe
+                                                        and s.EmployeeId = @employeeId
+                                                        and Email = 1", new {timeframe, employeeId}).ToList();
+
+                return result;   
+            }
+        }
+
+        public List<ReportMetrics> AllPhoneDaysAllStaff(int timeframe)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"select s.*, e.name from Shifts s
+                                                        join Employees e on e.employeeid = s.employeeid
+                                                        where date > getdate() - @timeframe
+                                                        and Phone = 1", new {timeframe}).ToList();
+
+                return result;    
+            }
+        }
+
+        public List<ReportMetrics> AllPhoneDaysPerEmployee(int timeframe, int employeeId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"select s.*, e.name from Shifts s
+                                                        join Employees e on e.employeeid = s.employeeid
+                                                        where date > getdate() - @timeframe
+                                                        and s.EmployeeId = @employeeId
+                                                        and Phone = 1", new {timeframe, employeeId}).ToList();
+
+                return result;    
+            }
+        }
+
+        public List<ReportMetrics> TotalPhoneDaysAllStaff(int timeframe)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"select count(*) as totalphonedays, e.name from Shifts s
+                                                        join Employees e on e.employeeid = s.employeeid
+                                                        where date > getdate() - @timeframe
+                                                        and Phone = 1
+                                                        group by e.Name", new {timeframe}).ToList();
+
+                return result;    
+            }
+        }
+
+        public List<ReportMetrics> TotalPhoneDaysPerEmployee(int timeframe, int employeeId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"select count(*) as totalphonedays, e.name from Shifts s
+                                                        join Employees e on e.employeeid = s.employeeid
+                                                        where date > getdate() - @timeframe
+                                                        and s.EmployeeId = @employeeId
+                                                        and Phone = 1
+                                                        group by e.Name", new {timeframe, employeeId}).ToList();
+
+                return result;    
+            }
+        }
+
+        public List<ReportMetrics> TotalEmailDaysAllStaff(int timeframe)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"select count(*) as totalemaildays, e.name from Shifts s
+                                                        join Employees e on e.employeeid = s.employeeid
+                                                        where date > getdate() - @timeframe
+                                                        and Email = 1
+                                                        group by e.Name", new {timeframe}).ToList();
+
+                return result;    
+            }
+        }
+
+        public List<ReportMetrics> TotalEmailDaysPerEmployee(int timeframe, int employeeId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.Query<ReportMetrics>(@"select count(*) as totalemaildays, e.name from Shifts s
+                                                        join Employees e on e.employeeid = s.employeeid
+                                                        where date > getdate() - @timeframe
+                                                        and s.EmployeeId = @employeeId
+                                                        and Email = 1
+                                                        group by e.Name", new {timeframe, employeeId }).ToList();
+
+                return result;     
+            }
+        }
     }
 }
 

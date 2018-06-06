@@ -122,18 +122,38 @@ namespace time_tracker_API.Controllers
 
             return StatusCode((int) HttpStatusCode.OK, supportTeamMetrics);
         }
+
+        [HttpGet("reporting/{id}")]
+        public IActionResult GetReports(int id, [FromQuery] int employeeId, int managerId, int timeframe)
+        {
+            var report = (Reports) id;
+
+            List<ReportMetrics> myReports;
+
+            try
+            {
+                myReports = new ReportGenerator(_repo).GenerateReport(report, employeeId, managerId, timeframe);
+            }
+            catch (Exception)
+            {
+                return StatusCode((int) HttpStatusCode.InternalServerError,
+                    "Sorry, something went wrong. Please try again later.");
+            }
+
+            return StatusCode((int) HttpStatusCode.OK, myReports);
+        }
     }
 
-    public class SupporterTeamMetric
+    public enum Reports
     {
-        public int EmployeeId { get; set; }
-        public string Name { get; set; }
-        public int? TotalWorkedFromHome { get; set; }
-        public int? TotalCalledOut { get; set; }
-        public int? TotalUnplannedOut { get; set; }
-        public int? PhoneDays { get; set; }
-        public int? EmailDays { get; set; }
-        public int? IntegrationsDays { get; set; }
-        public int? NonCoverageDays { get; set; }
+        AllShiftsWithinXWeeks=1,
+        WorkfromHomeWithinXWeeks,
+        UnplannedCalloutsWithinXWeeks,
+        AllShiftsByManagerWithinXWeeks,
+        UnplannedVsPlannedSickDaysWithinXWeeks,
+        AllEmailDays,
+        AllPhoneDays,
+        TotalPhoneDays,
+        TotalEmailDays
     }
 }
