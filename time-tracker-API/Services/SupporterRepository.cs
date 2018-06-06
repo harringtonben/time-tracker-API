@@ -332,12 +332,13 @@ namespace time_tracker_API.Services
                                                         allshift_cte (allworkdays, employeeid) as
                                                         (
                                                         select count(*) as allworkdays, EmployeeId from Shifts
-                                                        and date > getdate() - @timeframe
+                                                        where date > getdate() - @timeframe
                                                         group by EmployeeId
                                                         )
-                                                        select distinct (c.sickdays * 100)/a.allworkdays as unplannedsicktime from shifts s
+                                                        select distinct (c.sickdays * 100)/a.allworkdays as unplannedsicktime, e.Name from shifts s
                                                         join callout_cte c on c.employeeid = s.EmployeeId
                                                         join allshift_cte a on a.employeeid = s.EmployeeId
+                                                        join Employees e on e.employeeId = s.employeeId
                                                         ", new {timeframe}).ToList();
 
                 return result;   
@@ -366,9 +367,10 @@ namespace time_tracker_API.Services
                                                         and date > getdate() - @timeframe
                                                         group by EmployeeId
                                                         )
-                                                        select distinct (c.sickdays * 100)/a.allworkdays as unplannedsicktime from shifts s
+                                                        select distinct (c.sickdays * 100)/a.allworkdays as unplannedsicktime, e.Name from shifts s
                                                         join callout_cte c on c.employeeid = s.EmployeeId
                                                         join allshift_cte a on a.employeeid = s.EmployeeId
+                                                        join Employees e on e.employeeId = s.employeeId
                                                         ", new {employeeId, timeframe}).ToList();
 
                 return result;   
@@ -476,7 +478,7 @@ namespace time_tracker_API.Services
             {
                 db.Open();
 
-                var result = db.Query<ReportMetrics>(@"select count(*) as totalphonedays, e.name from Shifts s
+                var result = db.Query<ReportMetrics>(@"select count(*) as totalemaildays, e.name from Shifts s
                                                         join Employees e on e.employeeid = s.employeeid
                                                         where date > getdate() - @timeframe
                                                         and Email = 1
@@ -492,7 +494,7 @@ namespace time_tracker_API.Services
             {
                 db.Open();
 
-                var result = db.Query<ReportMetrics>(@"select count(*) as totalphonedays, e.name from Shifts s
+                var result = db.Query<ReportMetrics>(@"select count(*) as totalemaildays, e.name from Shifts s
                                                         join Employees e on e.employeeid = s.employeeid
                                                         where date > getdate() - @timeframe
                                                         and s.EmployeeId = @employeeId
