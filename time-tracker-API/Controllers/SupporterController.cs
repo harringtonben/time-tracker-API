@@ -192,8 +192,7 @@ namespace time_tracker_API.Controllers
                 csv += Environment.NewLine;
             }
             
-            return File(Encoding.ASCII.GetBytes(csv),"text/csv");;
-
+            return File(Encoding.ASCII.GetBytes(csv),"text/csv", "report.csv");;
         }
     }
 }
