@@ -136,7 +136,7 @@ namespace time_tracker_API.Controllers
 
     public enum Reports
     {
-        AllShiftsWithinXWeeks,
+        AllShiftsWithinXWeeks=1,
         WorkfromHomeWithinXWeeks,
         UnplannedCalloutsWithinXWeeks,
         AllShiftsByManagerWithinXWeeks,

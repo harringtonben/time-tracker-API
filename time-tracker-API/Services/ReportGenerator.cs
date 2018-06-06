@@ -37,7 +37,7 @@ namespace time_tracker_API.Services
                     if (employeeId == 0)
                         metrics = _repo.AllCalloutsAllStaff(timeframe);
                     
-                    metrics = _repo.AllCalloutsPerEmployee(timeframe);
+                    metrics = _repo.AllCalloutsPerEmployee(timeframe, employeeId);
 
                     return metrics;
                 case Reports.AllShiftsByManagerWithinXWeeks:
