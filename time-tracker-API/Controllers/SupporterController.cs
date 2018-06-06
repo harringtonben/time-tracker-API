@@ -1,10 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Net.Http.Headers;
 using time_tracker_API.Services;
+using ContentDispositionHeaderValue = System.Net.Http.Headers.ContentDispositionHeaderValue;
+using MediaTypeHeaderValue = System.Net.Http.Headers.MediaTypeHeaderValue;
 
 namespace time_tracker_API.Controllers
 {
@@ -142,18 +150,49 @@ namespace time_tracker_API.Controllers
 
             return StatusCode((int) HttpStatusCode.OK, myReports);
         }
-    }
 
-    public enum Reports
-    {
-        AllShiftsWithinXWeeks=1,
-        WorkfromHomeWithinXWeeks,
-        UnplannedCalloutsWithinXWeeks,
-        AllShiftsByManagerWithinXWeeks,
-        UnplannedVsPlannedSickDaysWithinXWeeks,
-        AllEmailDays,
-        AllPhoneDays,
-        TotalPhoneDays,
-        TotalEmailDays
+        [HttpGet("exports/{id}")]
+        public ActionResult ExportReport(int id, [FromQuery] int employeeId, int managerId, int timeframe)
+        {
+            var report = (Reports) id;
+
+            List<ReportMetrics> reportExport = new List<ReportMetrics>();
+
+            try
+            {
+                reportExport = new ReportGenerator(_repo).GenerateReport(report, employeeId, managerId, timeframe);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+            
+            var csv = "";
+            IEnumerable<PropertyInfo> properties = new List<PropertyInfo>();
+            foreach (var metric in reportExport)
+            {
+                
+                if (!properties.Any())
+                {
+                    properties = metric.GetType().GetProperties();
+                    foreach (var property in properties)
+                    {
+                        csv += $"{property.Name},";
+                    }
+                    csv.TrimEnd(',');
+                    csv += Environment.NewLine;
+                }
+
+                foreach (var property in properties)
+                {
+                    csv += $"{property.GetValue(metric)},";
+                }
+
+                csv.TrimEnd(',');
+                csv += Environment.NewLine;
+            }
+            
+            return File(Encoding.ASCII.GetBytes(csv),"text/csv", "report.csv");;
+        }
     }
 }
