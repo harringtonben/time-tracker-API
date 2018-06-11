@@ -41,6 +41,13 @@ namespace time_tracker_API
                     options.Conventions.AuthorizeFolder("/Account/Manage");
                     options.Conventions.AuthorizePage("/Account/Logout");
                 });
+            
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
 
             // Register no-op EmailSender used by account confirmation and password reset during development
             // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713
@@ -64,6 +71,8 @@ namespace time_tracker_API
             {
                 app.UseExceptionHandler("/Error");
             }
+            
+            app.UseCors("MyPolicy");
 
             app.UseStaticFiles();
 

@@ -504,6 +504,18 @@ namespace time_tracker_API.Services
                 return result;     
             }
         }
+
+        public Supporter GetSupporter(int id)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.QueryFirst<Supporter>("select * from Employees where employeeId = @id", new {id});
+
+                return result;
+            }
+        }
     }
 }
 

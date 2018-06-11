@@ -98,6 +98,23 @@ namespace time_tracker_API.Controllers
             }
         }
 
+        [HttpGet("{id}/employeeinfo")]
+        public IActionResult GetSingle(int id)
+        {
+            Supporter supporter;
+
+            try
+            {
+                supporter = _repo.GetSupporter(id);
+            }
+            catch (Exception e)
+            {
+                return StatusCode((int) HttpStatusCode.InternalServerError, "Sorry, something went wrong. Please try again later.");  
+            }
+
+            return StatusCode((int) HttpStatusCode.OK, supporter);
+        }
+
         [HttpGet("{id}")]
         public IActionResult GetMetrics(int id, [FromQuery] int timeframe)
         {
