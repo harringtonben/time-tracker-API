@@ -85,5 +85,10 @@ namespace time_tracker_API.Services
                 return result == 1;
             }
         }
+
+        public Manager GetManager(int id)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
