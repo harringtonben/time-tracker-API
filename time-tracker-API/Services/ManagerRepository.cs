@@ -88,7 +88,14 @@ namespace time_tracker_API.Services
 
         public Manager GetManager(int id)
         {
-            throw new System.NotImplementedException();
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.QueryFirst<Manager>("SELECT * FROM Managers where ManagerId = @id", new {id});
+
+                return result;
+            }
         }
     }
 }
