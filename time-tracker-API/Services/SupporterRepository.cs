@@ -126,7 +126,7 @@ namespace time_tracker_API.Services
                                                                 GROUP BY EmployeeId
                                                                 )
                                                                 
-                                                                SELECT DISTINCT e.EmployeeId, e.Name, w.TotalWorkedFromHome, c.TotalCalledOut, u.TotalUnplannedOut from Employees e
+                                                                SELECT DISTINCT e.EmployeeId, e.Name, e.ManagerId, w.TotalWorkedFromHome, c.TotalCalledOut, u.TotalUnplannedOut from Employees e
                                                                 LEFT JOIN  WorkFromHomeCTE w on w.EmployeId = e.EmployeeId
                                                                 LEFT JOIN CalloutCTE c on c.EmployeeId = e.EmployeeId
                                                                 LEFT JOIN UnplannedCalloutCTE u on u.EmployeeId = e.EmployeeId
@@ -193,7 +193,7 @@ namespace time_tracker_API.Services
                                                                 GROUP BY EmployeeId
                                                                 )
                                                                 
-                                                                SELECT DISTINCT e.EmployeeId, e.Name, w.TotalWorkedFromHome, c.TotalCalledOut, u.TotalUnplannedOut, p.PhoneDays, em.EmailDays, i.IntegrationsDays, n.NonCoverageDays from Employees e
+                                                                SELECT DISTINCT e.EmployeeId, e.Name, e.ManagerId, w.TotalWorkedFromHome, c.TotalCalledOut, u.TotalUnplannedOut, p.PhoneDays, em.EmailDays, i.IntegrationsDays, n.NonCoverageDays from Employees e
                                                                 LEFT JOIN  WorkFromHomeCTE w on w.EmployeId = e.EmployeeId
                                                                 LEFT JOIN CalloutCTE c on c.EmployeeId = e.EmployeeId
                                                                 LEFT JOIN UnplannedCalloutCTE u on u.EmployeeId = e.EmployeeId
