@@ -49,7 +49,7 @@ namespace time_tracker_API.Services
                 var result = db.Execute(@"UPDATE Shifts
                                                   SET Date = @Date,
                                                       EmployeeId = @EmployeeId,
-                                                      MangerId = @ManagerId,
+                                                      ManagerId = @ManagerId,
                                                       WorkFromHome = @WorkFromHome,
                                                       Callout = @Callout, Planned = @Planned,
                                                       ShiftLengthId = @ShiftLengthId,

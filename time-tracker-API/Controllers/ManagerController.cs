@@ -41,6 +41,24 @@ namespace time_tracker_API.Controllers
                     "Sorry, something went wrong. Please try again later.");
         }
 
+        [HttpGet("{id}")]
+        public IActionResult GetSingle(int id)
+        {
+            Manager manager;
+            
+            try
+            {
+                manager = _repo.GetManager(id);
+            }
+            catch (Exception e)
+            {
+                return StatusCode((int) HttpStatusCode.InternalServerError,
+                    "Sorry, something went wrong. Please try again later.");
+            }
+
+            return StatusCode((int) HttpStatusCode.OK, manager);
+        }
+
         [HttpPut("{id}")]
         public IActionResult Edit([FromBody] ManagerDto manager, int id)
         {

@@ -85,5 +85,17 @@ namespace time_tracker_API.Services
                 return result == 1;
             }
         }
+
+        public Manager GetManager(int id)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                db.Open();
+
+                var result = db.QueryFirst<Manager>("SELECT * FROM Managers where ManagerId = @id", new {id});
+
+                return result;
+            }
+        }
     }
 }
