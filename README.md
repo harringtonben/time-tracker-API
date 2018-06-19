@@ -1,4 +1,4 @@
-## Time Tracker App Front End
+## Time Tracker App Back End API
 
 This is the back end portion of the time tracker app that I built as a final capstone as Nashville Software School for the support team managers at Emma to be able to track shift data for the team members and get better metrics and reporting on that data.
 
