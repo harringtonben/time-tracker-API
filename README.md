@@ -17,4 +17,4 @@ cd (time-tracker-API)
 dotnet run
 ```
 
-#####  This will be available to hit via postment at the port specified in your IDE, or by utilizing the front end portion of this app. 
+#####  This will be available to hit via postment at the port specified in your IDE, or by utilizing the [front end portion](https://github.com/harringtonben/time-tracker-frontend) of this app. 
